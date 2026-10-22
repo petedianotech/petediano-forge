@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+:root {
+  /* Brand palette */
+  --primary: #4285F4;
+  --accent-teal: #3DDC97;
+  --accent-warm: #FFA966;
+  --bg-app: #F5F8FC;
+  --surface: #FFFFFF;
+  --text-primary: #243047;
+  --text-secondary: #68758A;
+  --border: #E2E9F2;
+  --selection: #EAF2FF;
+  --background: #F5F8FC;
+  --foreground: #243047;
+}
+
+.dark {
+  --primary: #5B9AFF;
+  --accent-teal: #3DDC97;
+  --accent-warm: #FFA966;
+  --bg-app: #0F172A;
+  --surface: #1E293B;
+  --text-primary: #E2E8F0;
+  --text-secondary: #94A3B8;
+  --border: #334155;
+  --selection: #1E3A5F;
+  --background: #0F172A;
+  --foreground: #E2E8F0;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-accent-teal: var(--accent-teal);
+  --color-accent-warm: var(--accent-warm);
+  --color-surface: var(--surface);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border: var(--border);
+  --color-selection: var(--selection);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--bg-app);
+  color: var(--text-primary);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Code highlighting */
+.hljs {
+  background: #1e293b !important;
+  border-radius: 0.5rem;
+  padding: 1rem !important;
+  overflow-x: auto;
+}
+
+/* Safe area for mobile */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

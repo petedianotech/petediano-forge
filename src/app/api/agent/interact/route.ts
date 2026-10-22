@@ -146,15 +146,22 @@ export async function POST(req: NextRequest) {
       };
     }
 
+    // SDK >= 2.0 uses the steps schema automatically.
+    // agent: "antigravity-preview-09-2026" is the current Antigravity managed agent.
     const interaction = await client.interactions.create(createParams);
 
+    const result = interaction as Record<string, unknown>;
     return NextResponse.json({
       id: interaction.id,
       environment_id:
-        (interaction as any).environment_id ??
-        (interaction as any).environmentId,
-      status: (interaction as any).status ?? "in_progress",
-      output_text: (interaction as any).output_text ?? null,
+        (result.environment_id as string | undefined) ??
+        (result.environmentId as string | undefined) ??
+        null,
+      status: (result.status as string | undefined) ?? "in_progress",
+      // Prefer SDK convenience property (new schema); null while background job runs.
+      output_text:
+        (typeof result.output_text === "string" ? result.output_text : null) ??
+        null,
     });
   } catch (e: unknown) {
     if (e instanceof z.ZodError) {
@@ -165,6 +172,22 @@ export async function POST(req: NextRequest) {
     }
     const msg = e instanceof Error ? e.message : "Agent interaction failed";
     console.error("Interact error", e);
+
+    // Surface the known legacy-schema error clearly so operators know to upgrade the SDK.
+    if (
+      typeof msg === "string" &&
+      msg.includes("legacy Interactions API schema")
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Gemini Interactions API requires @google/genai >= 2.0.0. Upgrade the package and redeploy.",
+          details: msg,
+        },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
